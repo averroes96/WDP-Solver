@@ -47,6 +47,23 @@ public class Bid {
         
     }
     
+    public boolean inConflictWith(ArrayList<Bid> bids){
+        
+        for(Bid bid : bids){
+	Iterator<Integer> objects = this.bidObjects.iterator();
+        
+	while(objects.hasNext()){
+            if(bid.getBidObjects().contains(objects.next())){
+                    return true;
+		}
+	}
+        
+        }
+        
+        return false;
+        
+    }    
+    
     public void addToConflicts(Bid b){
         
         if(this.inConflictWith(b)){

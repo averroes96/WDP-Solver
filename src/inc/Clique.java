@@ -10,14 +10,11 @@ public class Clique {
     
     private ArrayList<Bid> cliqueBids ;
     private int weight ;
-    private int nbrBids ;
 
     public Clique() {
         
         this.cliqueBids = new ArrayList<>();
-        this.weight = 0 ;
-        this.nbrBids = 0 ;
-        
+        this.weight = 0 ;      
     }
 
     public ArrayList<Bid> getCliqueBids() {
@@ -34,18 +31,6 @@ public class Clique {
 
     public void setWeight(int weight) {
         this.weight = weight;
-    }
-
-    public int getNbrBids() {
-        return nbrBids;
-    }
-
-    public void setNbrBids(int nbrBids) {
-        this.nbrBids = nbrBids;
-    }
-    
-    
-    
-    
+    }  
     
 }

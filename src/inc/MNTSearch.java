@@ -6,7 +6,7 @@
 package inc;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Random;
 
 /**
  *
@@ -14,9 +14,12 @@ import java.util.HashMap;
  */
 public class MNTSearch {
     
-    HashMap<Bid, Integer> graph = new HashMap<>();
-    Clique clique = new Clique();
-    
+    public ArrayList<Bid> graph = new ArrayList<>();
+    public Clique clique = new Clique();
+    public ArrayList<Bid> tabouList = new ArrayList<>();
+    public ArrayList<Bid> omList = new ArrayList<>();
+    private int tSwap ;
+    private final int tabu = 7 ;
     
     public boolean isPA(ArrayList<Bid> excluded){
         
@@ -24,7 +27,14 @@ public class MNTSearch {
         
     }
     
-    public int AllButOne(Bid b){
+    public void OMList(){
+        
+        graph.stream().filter((bid) -> (allButOne(bid) != 0)).forEachOrdered((bid) -> {
+            omList.add(bid);
+        });
+    }
+    
+    public int allButOne(Bid b){
         
         int cpt = 0, index = 0 ;
         
@@ -35,34 +45,33 @@ public class MNTSearch {
             }
         }
         
-        
         return cpt == 1 ? index : 0 ;
         
     }
     
-    public boolean isOM(ArrayList<Bid> excluded){
-        
-        return excluded.stream().noneMatch((exc) -> (AllButOne(exc) != 0));
-        
-    }
     
-    public void ADD(ArrayList<Bid> excuded){
+    public void ADD(Bid b){
         
-        if(!excuded.isEmpty()){
-            if(isPA(excuded)){
-                excuded.forEach((bid) -> {
-                    clique.getCliqueBids().add(bid);
-                    clique.setWeight(clique.getWeight() + bid.getPrice()); 
-                });
+        if (!clique.getCliqueBids().contains(b)) {
+
+            if (!b.inConflictWith(clique.getCliqueBids())) {
+                clique.getCliqueBids().add(b);
+                clique.setWeight(clique.getWeight() + b.getPrice());
             }
+
         }
     }
     
-    public void SWAP(ArrayList<Bid> excuded){
+    public void SWAP(Bid b){
         
-        if(!excuded.isEmpty() && isOM(excuded)){
+        int target = allButOne(b);
+        if(target != 0){
             
-            
+            clique.setWeight(clique.getWeight() - clique.getCliqueBids().get(target).getPrice());
+            tabouList.add(clique.getCliqueBids().get(target));
+            clique.getCliqueBids().remove(target);
+            clique.getCliqueBids().add(b);
+            clique.setWeight(clique.getWeight() + b.getPrice());
             
         }
         
@@ -71,9 +80,28 @@ public class MNTSearch {
     public void DROP(Bid b){
         
         if(clique.getCliqueBids().contains(b)){
+            tabouList.add(b);
             clique.getCliqueBids().remove(b);
             clique.setWeight(clique.getWeight() - b.getPrice());
         }
+        
+    }
+    
+    public void selectRandomSolution(){
+        
+        Random rand = new Random();
+        
+        int vertice = rand.nextInt(graph.size());
+        
+        clique.getCliqueBids().add(graph.get(vertice));
+        
+        int v = rand.nextInt(graph.size());
+        
+        clique.getCliqueBids().add(graph.get(v));
+        
+        graph.forEach((b) -> {
+            ADD(b);
+        });
         
     }
     
