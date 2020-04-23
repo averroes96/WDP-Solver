@@ -13,6 +13,6 @@ public interface Init {
     
     int MAX_ITER = 100000000;
     
-    int depthSearch = 4000;
+    int DEPTH_SEARCH = 4000;
     
 }

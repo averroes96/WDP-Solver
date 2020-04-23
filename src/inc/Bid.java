@@ -15,8 +15,9 @@ import java.util.Iterator;
 public class Bid {
     
     private ArrayList<Integer> bidObjects ;
-    private int price ;
+    private double price ;
     private ArrayList<Bid> conflict;
+    private int tt = 0 ;
 
     public Bid(int pricce) {
         
@@ -108,11 +109,11 @@ public class Bid {
         this.bidObjects = bidObjects;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
     
@@ -121,6 +122,24 @@ public class Bid {
         return price >= 0 ; 
         
     }
+
+    public ArrayList<Bid> getConflict() {
+        return conflict;
+    }
+
+    public void setConflict(ArrayList<Bid> conflict) {
+        this.conflict = conflict;
+    }
+
+    public int getTt() {
+        return tt;
+    }
+
+    public void setTt(int tt) {
+        this.tt = tt;
+    }
+    
+    
     
     
     

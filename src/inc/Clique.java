@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Clique {
     
     private ArrayList<Bid> cliqueBids ;
-    private int weight ;
+    private double weight ;
 
     public Clique() {
         
@@ -25,11 +25,11 @@ public class Clique {
         this.cliqueBids = cliqueBids;
     }
 
-    public int getWeight() {
+    public double getWeight() {
         return weight;
     }
 
-    public void setWeight(int weight) {
+    public void setWeight(double weight) {
         this.weight = weight;
     }  
     

@@ -12,29 +12,41 @@ import java.util.Random;
  *
  * @author user
  */
-public class MNTSearch {
+public class MNTSearch implements Init{
     
     public ArrayList<Bid> graph = new ArrayList<>();
-    public Clique clique = new Clique();
+    public Clique starClique = new Clique();
     public ArrayList<Bid> tabouList = new ArrayList<>();
     public ArrayList<Bid> omList = new ArrayList<>();
-    private int tSwap ;
+    public ArrayList<Bid> paList = new ArrayList<>();
+    private int tSwap, currIter, noImprovement ;
     private final int tabu = 7 ;
+    private Random myrand = new Random();
     
-    public boolean isPA(ArrayList<Bid> excluded){
+    public int getSwapRario(){
         
-        return excluded.stream().noneMatch((exc) -> (!clique.getCliqueBids().stream().noneMatch((bid) -> (exc.inConflictWith(bid)))));
+        Random rand = new Random();
+        
+        return rand.nextInt(omList.size()) + 7 ;
         
     }
     
-    public void OMList(){
+    public void OMList(Clique clique){
         
-        graph.stream().filter((bid) -> (allButOne(bid) != 0)).forEachOrdered((bid) -> {
+        graph.stream().filter((bid) -> (allButOne(bid, clique) != 0 && !tabouList.contains(bid))).forEachOrdered((bid) -> {
             omList.add(bid);
         });
     }
     
-    public int allButOne(Bid b){
+    public void PAList(Clique clique){
+        
+        graph.stream().filter((bid) -> (!bid.inConflictWith(clique.getCliqueBids())) && !clique.getCliqueBids().contains(bid) && !tabouList.contains(bid)).forEachOrdered((bid) -> {
+            paList.add(bid);
+        });
+        
+    }
+    
+    public int allButOne(Bid b, Clique clique){
         
         int cpt = 0, index = 0 ;
         
@@ -50,7 +62,7 @@ public class MNTSearch {
     }
     
     
-    public void ADD(Bid b){
+    public void ADD(Bid b, Clique clique){
         
         if (!clique.getCliqueBids().contains(b)) {
 
@@ -62,13 +74,14 @@ public class MNTSearch {
         }
     }
     
-    public void SWAP(Bid b){
+    public void SWAP(Bid b, Clique clique){
         
-        int target = allButOne(b);
+        int target = allButOne(b, clique);
         if(target != 0){
             
             clique.setWeight(clique.getWeight() - clique.getCliqueBids().get(target).getPrice());
             tabouList.add(clique.getCliqueBids().get(target));
+            clique.getCliqueBids().get(target).setTt(getSwapRario());
             clique.getCliqueBids().remove(target);
             clique.getCliqueBids().add(b);
             clique.setWeight(clique.getWeight() + b.getPrice());
@@ -77,31 +90,128 @@ public class MNTSearch {
         
     }
     
-    public void DROP(Bid b){
+    public void DROP(Bid b, Clique clique){
         
         if(clique.getCliqueBids().contains(b)){
             tabouList.add(b);
+            b.setTt(7);
             clique.getCliqueBids().remove(b);
             clique.setWeight(clique.getWeight() - b.getPrice());
         }
         
     }
     
-    public void selectRandomSolution(){
+    public Clique selectRandomSolution(){
         
-        Random rand = new Random();
+        int vertice = myrand.nextInt(graph.size()) ;
         
-        int vertice = rand.nextInt(graph.size());
+        Clique thisClique = new Clique() ;
         
-        clique.getCliqueBids().add(graph.get(vertice));
+        thisClique.getCliqueBids().add(graph.get(vertice));
         
-        int v = rand.nextInt(graph.size());
+        return thisClique ;
         
-        clique.getCliqueBids().add(graph.get(v));
+    }
+    
+    public void explorePAList(Clique clique){
         
-        graph.forEach((b) -> {
-            ADD(b);
+        if(!paList.isEmpty()){
+        
+            int index = -1 ;
+
+            while(paList.get(index + 1).getTt() != 0){
+                index++;
+            }
+            
+            if(index != -1)
+                ADD(paList.get(index + 1), clique);
+            else
+                DROP(clique.getCliqueBids().get(myrand.nextInt(clique.getCliqueBids().size())), clique);
+        
+        }
+        else
+            DROP(clique.getCliqueBids().get(myrand.nextInt(clique.getCliqueBids().size())), clique);
+        
+    }
+    
+    public void exploreOMList(Clique clique){
+        
+        if(!omList.isEmpty()){
+        
+            int index = -1 ;
+
+            while(omList.get(index + 1).getTt() != 0){
+                index++;
+            }
+            
+            if(index != -1)
+                SWAP(omList.get(index + 1), clique);
+            else
+                DROP(clique.getCliqueBids().get(myrand.nextInt(clique.getCliqueBids().size())), clique);
+        
+        }
+        else
+            DROP(clique.getCliqueBids().get(myrand.nextInt(clique.getCliqueBids().size())), clique);
+        
+    }    
+    
+    public void ExploreNeighborhood(Clique clique){
+                
+        int randVal = myrand.nextInt(2);
+        
+        switch(randVal){
+            
+            case 0 :
+                explorePAList(clique);
+                exploreOMList(clique);
+                break;
+            case 1 :
+                exploreOMList(clique);
+                explorePAList(clique);
+  
+        }
+        
+    }
+    
+    public void updateTabouList(){
+        
+        tabouList.forEach((bid) -> {
+            bid.setTt(bid.getTt()-1);
         });
+    }
+    
+    public void MNTAlgorithm(){
+        
+        currIter = 0 ;
+        
+        while(currIter < MAX_ITER){
+            
+            Clique global = selectRandomSolution();
+            
+            noImprovement = 0 ;
+            
+            Clique local = global ;
+            
+            while(noImprovement < DEPTH_SEARCH){
+
+                ExploreNeighborhood(global);
+                
+                noImprovement++ ;
+                currIter++ ;
+                
+                updateTabouList();
+                
+                if(global.getWeight() > local.getWeight()){
+                    noImprovement = 0 ;
+                    local = global;
+                }
+                
+            }
+            
+            if(local.getWeight() > starClique.getWeight())
+                starClique = local ;
+            
+        }
         
     }
     
