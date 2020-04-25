@@ -7,6 +7,8 @@ package inc;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -33,12 +35,16 @@ public class MNTSearch implements Init{
     
     public void OMList(Clique clique){
         
-        graph.stream().filter((bid) -> (allButOne(bid, clique) != 0 && !tabouList.contains(bid))).forEachOrdered((bid) -> {
+        omList.clear();
+        
+        graph.stream().filter((bid) -> (allButOne(bid, clique) != -1 && !tabouList.contains(bid))).forEachOrdered((bid) -> {
             omList.add(bid);
         });
     }
     
     public void PAList(Clique clique){
+        
+        paList.clear();
         
         graph.stream().filter((bid) -> (!bid.inConflictWith(clique.getCliqueBids())) && !clique.getCliqueBids().contains(bid) && !tabouList.contains(bid)).forEachOrdered((bid) -> {
             paList.add(bid);
@@ -57,7 +63,7 @@ public class MNTSearch implements Init{
             }
         }
         
-        return cpt == 1 ? index : 0 ;
+        return cpt == 1 ? index : -1 ;
         
     }
     
@@ -77,7 +83,7 @@ public class MNTSearch implements Init{
     public void SWAP(Bid b, Clique clique){
         
         int target = allButOne(b, clique);
-        if(target != 0){
+        if(target != -1){
             
             clique.setWeight(clique.getWeight() - clique.getCliqueBids().get(target).getPrice());
             tabouList.add(clique.getCliqueBids().get(target));
@@ -108,76 +114,94 @@ public class MNTSearch implements Init{
         Clique thisClique = new Clique() ;
         
         thisClique.getCliqueBids().add(graph.get(vertice));
+        thisClique.setWeight(graph.get(vertice).getPrice());
+        
+        graph.stream().filter((b) -> (!b.inConflictWith(thisClique.getCliqueBids()) && !thisClique.getCliqueBids().contains(b))).map((b) -> {
+            thisClique.setWeight(thisClique.getWeight() + b.getPrice());
+            return b;
+        }).forEachOrdered((b) -> {
+            thisClique.getCliqueBids().add(b);
+        });
         
         return thisClique ;
         
     }
     
-    public void explorePAList(Clique clique){
+    public Clique explorePAList(Clique clique){
+        
         
         if(!paList.isEmpty()){
         
-            int index = -1 ;
+            int index = 0 ;
 
-            while(paList.get(index + 1).getTt() != 0){
+            while(paList.get(index).getTt() != 0  && paList.get(index).getTt() < paList.size()){
                 index++;
             }
             
-            if(index != -1)
-                ADD(paList.get(index + 1), clique);
-            else
-                DROP(clique.getCliqueBids().get(myrand.nextInt(clique.getCliqueBids().size())), clique);
+            if(index != paList.size()){
+                ADD(paList.get(index), clique);
+               // System.out.println("ADD");
+            }
         
         }
-        else
+        else{
             DROP(clique.getCliqueBids().get(myrand.nextInt(clique.getCliqueBids().size())), clique);
+           // System.out.println("ADD DROP");
+        }
+        
+        return clique ;
         
     }
     
-    public void exploreOMList(Clique clique){
+    public Clique exploreOMList(Clique clique){
         
         if(!omList.isEmpty()){
         
-            int index = -1 ;
+            int index = 0 ;
 
-            while(omList.get(index + 1).getTt() != 0){
+            while(omList.get(index).getTt() != 0 && omList.get(index).getTt() < omList.size()){
                 index++;
             }
             
-            if(index != -1)
-                SWAP(omList.get(index + 1), clique);
-            else
-                DROP(clique.getCliqueBids().get(myrand.nextInt(clique.getCliqueBids().size())), clique);
+            if(index != omList.size()){
+                SWAP(omList.get(index), clique);
+               // System.out.println("SWAP");
+            }
         
         }
-        else
-            DROP(clique.getCliqueBids().get(myrand.nextInt(clique.getCliqueBids().size())), clique);
+        else{
+                DROP(clique.getCliqueBids().get(myrand.nextInt(clique.getCliqueBids().size())), clique);
+               // System.out.println("SWAP DROP");
+        }
+        
+        return clique ;
         
     }    
     
-    public void ExploreNeighborhood(Clique clique){
+    public Clique ExploreNeighborhood(Clique clique){
                 
-        int randVal = myrand.nextInt(2);
+        Clique N1 = explorePAList(clique);
+        Clique N2 = exploreOMList(clique);
         
-        switch(randVal){
-            
-            case 0 :
-                explorePAList(clique);
-                exploreOMList(clique);
-                break;
-            case 1 :
-                exploreOMList(clique);
-                explorePAList(clique);
-  
-        }
+        if(N1.getWeight() > N2.getWeight())
+            return N1;
+        else
+            return N2;
         
     }
     
     public void updateTabouList(){
         
+        ArrayList<Bid> temp = new ArrayList<>();
+        
         tabouList.forEach((bid) -> {
             bid.setTt(bid.getTt()-1);
+            if(bid.getTt() != 0)
+                temp.add(bid);
         });
+        
+        tabouList = temp;
+        
     }
     
     public void MNTAlgorithm(){
@@ -190,20 +214,44 @@ public class MNTSearch implements Init{
             
             noImprovement = 0 ;
             
-            Clique local = global ;
+            Clique local = null ;
+            try {
+                local = global.clone();
+            } catch (CloneNotSupportedException ex) {
+                Logger.getLogger(MNTSearch.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
             while(noImprovement < DEPTH_SEARCH){
-
-                ExploreNeighborhood(global);
+                
+                
+               // System.out.println("Iter == " + noImprovement);
+               // System.out.println("Number bids == " + global.getCliqueBids().size());
+               // System.out.println("W == " + global.getWeight());
+                
+               // System.out.println("OM list size == " + omList.size());
+               // System.out.println("PA list size == " + paList.size());
+               // System.out.println("TABOU list size == " + tabouList.size());
+                
+                PAList(global);
+                OMList(global);
+                global = ExploreNeighborhood(global);
                 
                 noImprovement++ ;
                 currIter++ ;
                 
                 updateTabouList();
                 
+                //System.out.println("Imp = " + noImprovement);
+                //System.out.println("Global = " + global.getWeight());
+                //System.out.println("Local = " + local.getWeight());
+                
                 if(global.getWeight() > local.getWeight()){
                     noImprovement = 0 ;
-                    local = global;
+                    try {
+                        local = global.clone();
+                    } catch (CloneNotSupportedException ex) {
+                        Logger.getLogger(MNTSearch.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
                 
             }
@@ -214,5 +262,15 @@ public class MNTSearch implements Init{
         }
         
     }
+
+    public ArrayList<Bid> getGraph() {
+        return graph;
+    }
+
+    public void setGraph(ArrayList<Bid> graph) {
+        this.graph = graph;
+    }
+    
+    
     
 }

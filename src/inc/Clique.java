@@ -6,7 +6,7 @@ import java.util.ArrayList;
  *
  * @author user
  */
-public class Clique {
+public class Clique implements Cloneable {
     
     private ArrayList<Bid> cliqueBids ;
     private double weight ;
@@ -31,6 +31,11 @@ public class Clique {
 
     public void setWeight(double weight) {
         this.weight = weight;
-    }  
+    }
+    
+    @Override
+    public Clique clone() throws CloneNotSupportedException{
+        return (Clique) super.clone();
+    }
     
 }

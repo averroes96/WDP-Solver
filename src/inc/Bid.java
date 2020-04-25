@@ -17,12 +17,13 @@ public class Bid {
     private ArrayList<Integer> bidObjects ;
     private double price ;
     private ArrayList<Bid> conflict;
-    private int tt = 0 ;
+    private int tt ;
 
     public Bid(int pricce) {
         
         bidObjects = new ArrayList<>() ;
         this.price = pricce ;
+        
         
     }
     
@@ -31,6 +32,7 @@ public class Bid {
         
         bidObjects = new ArrayList<>() ;
         this.price = 0 ;
+        this.tt = 0;
         
     }
     
@@ -92,7 +94,9 @@ public class Bid {
         String str = "";
         
         if(!bidObjects.isEmpty()){
-            str += "Selected objects :\n"; 
+            str += "Selected objects :\n [ ";
+            str = bidObjects.stream().map((integer) -> integer + " ").reduce(str, String::concat);
+            str += "]\n" ;
         }
         
         str += "\nPrice : " + price ;

@@ -11,8 +11,12 @@ package inc;
  */
 public interface Init {
     
-    int MAX_ITER = 100000000;
+    int MAX_ITER = 100;
     
-    int DEPTH_SEARCH = 4000;
+    int DEPTH_SEARCH = 40;
+    
+    String INOUT_EXCEPTION = "Input/Output exception has occured !";
+    
+    String INSTANCE_FOLDER = "C:\\Users\\user\\Documents\\NetBeansProjects\\WDP\\src\\instance\\";
     
 }

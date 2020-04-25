@@ -6,11 +6,12 @@
 package wdp;
 
 import inc.Bid;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -23,9 +24,9 @@ public class WDPInstances {
     private int nbrBids;
     private int nbrObjects;
 
-    public WDPInstances(int nbrBids, int nbrObjects) {
-        this.nbrBids = nbrBids;
-        this.nbrObjects = nbrObjects;
+    public WDPInstances() {
+        this.nbrBids = 0;
+        this.nbrObjects = 0;
     }
 
     public int getNbrBids() {
@@ -45,32 +46,40 @@ public class WDPInstances {
     }
    
         
-        public static ArrayList<Bid> getGraph(String filePath) throws FileNotFoundException, IOException{
+        public ArrayList<Bid> getGraph(String filePath) throws FileNotFoundException, IOException{
             
-            // read in the data
-            ArrayList<Bid> graph  = new ArrayList<>();
-            Scanner input = new Scanner(new File(filePath));
-            while(input.hasNextLine())
-            {
-                Scanner colReader = new Scanner(input.nextLine());
-                Bid bid = new Bid();
-                int i = 0 ;
-                while(colReader.hasNext())
-                {
-                    if(i == 0)
-                        bid.setPrice(colReader.nextDouble());
-                    else
-                        bid.getBidObjects().add(colReader.nextInt());
-                    i++;
-                }
+            FileReader reader = new FileReader(filePath);
+            BufferedReader br = new BufferedReader(reader);
+            ArrayList<Bid> bids = new ArrayList<>();
+
+            // read line by line
+            String line;
+            int i = 0;
+            while ((line = br.readLine()) != null) {
                 
-                graph.add(bid);
+                String[] arr = line.split(" ");
+                Bid bid = new Bid();
+                
+                if(i == 0){
+                    this.nbrBids = Integer.parseInt(arr[0]);
+                    this.nbrObjects = Integer.parseInt(arr[1]);
+                }
+                else{
+                    for(int cpt = 0; cpt < arr.length; cpt++){
+                        if(cpt == 0)
+                            bid.setPrice(Double.parseDouble(arr[cpt]));
+                        else
+                            bid.getBidObjects().add(Integer.parseInt(arr[cpt]));
+                    }
+                    bids.add(bid);
+                }
+                i++;
+                    
             }
             
-            return graph ;
-            
-        }
-        
+            return bids;
+
+        }   
         public static ObservableList<String> getAllFileNames(final File folder) throws IOException{
             
             ObservableList<String> filesList = FXCollections.observableArrayList();
@@ -86,5 +95,7 @@ public class WDPInstances {
             return filesList ;
             
         }
+        
+        
     
 }
