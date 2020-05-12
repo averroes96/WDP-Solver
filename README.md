@@ -1,6 +1,13 @@
 # WDP-Solver
 
-This is a java implementation of the "Solving the winner determination problem via a weighted maximum clique heuristic" article by Qinghua Wu and Jin-Kao Hao
+This is a java implementation of the "Solving the winner determination problem via a weighted maximum clique heuristic" article by Qinghua Wu and Jin-Kao Hao for a study project
+
+# GUI
+
+User just need to select one of the instances provided in the combo box and click on "Find" button to start the search.
+
+![](gui/interface.png)
+
 
 ## Link to the scientific paper 
 
