@@ -4,29 +4,48 @@
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXTextArea?>
 <?import com.jfoenix.controls.JFXToggleButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #4a536b;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wdp.MainController">
+<AnchorPane id="AnchorPane" prefHeight="650.0" prefWidth="800.0" style="-fx-background-color: #4a536b;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wdp.MainController">
     <children>
-        <Label fx:id="label" layoutX="126" layoutY="120" minHeight="16" minWidth="69" />
-      <JFXComboBox fx:id="instanceBox" focusColor="#ff9a8d" layoutX="300.0" layoutY="100.0" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #aed6dc; -fx-text-fill: #4a536b;" unFocusColor="#4a536b" />
-      <JFXButton fx:id="findBtn" alignment="CENTER" buttonType="RAISED" defaultButton="true" layoutX="300.0" layoutY="167.0" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #aed6dc;" text="Find" textFill="#4a536b">
+      <JFXTextArea fx:id="resultArea" focusColor="#ff9a8d" layoutX="25.0" layoutY="286.0" prefHeight="350.0" prefWidth="750.0" promptText="Solution results will be printed out here..." style="-fx-background-color: white;" unFocusColor="#4a536b" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0">
          <font>
-            <Font name="Consolas Bold" size="18.0" />
+            <Font name="Consolas Bold" size="14.0" />
          </font>
-      </JFXButton>
-      <JFXTextArea fx:id="resultArea" focusColor="#ff9a8d" layoutX="25.0" layoutY="286.0" prefHeight="300.0" prefWidth="750.0" style="-fx-background-color: white;" unFocusColor="#4a536b" />
-      <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" prefHeight="40.0" prefWidth="772.0" text="WDP Solver" textFill="#ff9a8d">
+         <padding>
+            <Insets bottom="5.0" left="10.0" right="5.0" top="10.0" />
+         </padding></JFXTextArea>
+      <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" prefHeight="40.0" prefWidth="772.0" text="WDP Solver" textFill="#aed6dc" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
          <font>
             <Font name="Consolas Bold" size="24.0" />
          </font>
       </Label>
-      <JFXToggleButton fx:id="bidPoll" layoutX="275.0" layoutY="217.0" prefHeight="60.0" prefWidth="250.0" text="Show bids information" textFill="#aed6dc" toggleColor="#ff9a8d" toggleLineColor="#fafafa">
-         <font>
-            <Font name="Consolas Bold" size="14.0" />
-         </font>
-      </JFXToggleButton>
+      <VBox alignment="CENTER" layoutX="25.0" layoutY="68.0" prefHeight="200.0" prefWidth="750.0" spacing="20.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0">
+         <children>
+            <JFXComboBox fx:id="instanceBox" focusColor="#ff9a8d" focusTraversable="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #aed6dc; -fx-text-fill: #4a536b; -fx-alignment: center;" unFocusColor="#4a536b">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </JFXComboBox>
+            <JFXButton fx:id="findBtn" alignment="CENTER" buttonType="RAISED" defaultButton="true" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #ff9a8d;" text="Find" textFill="#4a536b">
+               <font>
+                  <Font name="Consolas Bold" size="18.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </JFXButton>
+            <JFXToggleButton fx:id="bidPoll" prefHeight="60.0" prefWidth="250.0" text="Show bids information" textFill="#aed6dc" toggleColor="#ff9a8d" toggleLineColor="#fafafa">
+               <font>
+                  <Font name="Consolas Bold" size="14.0" />
+               </font>
+            </JFXToggleButton>
+         </children>
+      </VBox>
     </children>
 </AnchorPane>

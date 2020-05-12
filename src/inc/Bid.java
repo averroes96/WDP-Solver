@@ -99,7 +99,7 @@ public class Bid {
             str += "]\n" ;
         }
         
-        str += "\nPrice : " + price ;
+        str += "Price : " + price + "\n" ;
         
         return str ;
         

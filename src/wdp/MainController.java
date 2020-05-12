@@ -88,6 +88,8 @@ public class MainController implements Initializable, Init {
         
             findBtn.setOnAction(Action -> {
                 
+                resultArea.clear();
+                
                 t1 = Instant.now();
                 search.MNTAlgorithm();
                 t2 = Instant.now();
@@ -96,20 +98,21 @@ public class MainController implements Initializable, Init {
                 
                 String solution = "";
                 
-                solution += "\nWining bids are : \n";
+                solution += "Wining bids are : \n";
                 
                 int cpt = 1;
                 
                 for(Bid bid : search.starClique.getCliqueBids()){
                     solution += "\nBid num = " + cpt + "\n" ;
                     solution += bid.toString();
+                    cpt++;
                 }
                 
                 solution += "\n\nTotal gain = " + search.starClique.getWeight();
                 
                 resultArea.appendText(solution);
                 
-                alert.show("Solution was found", "> Elapsed time = " + elapsedTime + " ms" + "\n> Total gain = " + search.starClique.getWeight(), Alert.AlertType.ERROR, true);
+                alert.show("Solution was found", "> Elapsed time = " + elapsedTime + " ms" + "\n> Total gain = " + search.starClique.getWeight(), Alert.AlertType.ERROR, false);
                 
                 
             });        
