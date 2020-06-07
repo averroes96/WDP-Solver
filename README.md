@@ -8,7 +8,7 @@ This is a java implementation of the "Solving the winner determination problem v
 
 # IDE: 
 
-[NetBeans](https://netbeans.org/)
+* [NetBeans](https://netbeans.org/)
 
 ### GUI
 
