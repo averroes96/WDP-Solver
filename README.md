@@ -2,7 +2,15 @@
 
 This is a java implementation of the "Solving the winner determination problem via a weighted maximum clique heuristic" article by Qinghua Wu and Jin-Kao Hao for a study project
 
-# GUI
+## Libraries :
+
+* [jfoenix](http://jfoenix.com/)
+
+# IDE: 
+
+[NetBeans](https://netbeans.org/)
+
+### GUI
 
 User just need to select one of the instances provided in the combo box and click on "Find" button to start the search.
 
