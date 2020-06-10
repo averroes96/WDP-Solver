@@ -6,7 +6,7 @@ This is a java implementation of the "Solving the winner determination problem v
 
 * [jfoenix](http://jfoenix.com/)
 
-# IDE: 
+## IDE: 
 
 * [NetBeans](https://netbeans.org/)
 
