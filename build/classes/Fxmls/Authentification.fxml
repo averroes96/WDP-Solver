@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane fx:id="root" prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: transparent;" stylesheets="@../Layout/authentification.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.AuthentificationController">
+<AnchorPane prefHeight="600.0" prefWidth="1000.0" style="-fx-background-color: transparent;" stylesheets="@../Layout/authentification.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.AuthentificationController">
    <children>
       <AnchorPane layoutY="60.0" prefHeight="480.0" prefWidth="1000.0" style="-fx-background-color: #333;" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
          <children>
@@ -44,7 +44,7 @@
             <VBox fx:id="paneSignUp" alignment="CENTER_LEFT" spacing="20.0" visible="false">
                <children>
                   <Label styleClass="title-login" text="Sign Up" />
-                  <JFXTextField fx:id="fieldFullNameSignUp" promptText="Full Name" styleClass="field" />
+                  <JFXTextField fx:id="fieldFullNameSignUp" promptText="Username" styleClass="field" />
                   <JFXTextField fx:id="fieldEmailSignUp" promptText="Email" styleClass="field" />
                   <JFXPasswordField fx:id="fieldPasswordSignUp" promptText="Password" styleClass="field" />
                   <HBox alignment="CENTER_RIGHT">
@@ -63,11 +63,11 @@
             <VBox fx:id="paneSignIn" alignment="CENTER_LEFT" spacing="20.0">
                <children>
                   <Label styleClass="title-login" text="Sign In" />
-                  <JFXTextField fx:id="fieldEmailSignIn" promptText="Email" styleClass="field" />
-                  <JFXPasswordField fx:id="fieldPasswordSignIn" promptText="Password" styleClass="field" />
+                  <JFXTextField fx:id="username" promptText="Username" styleClass="field" />
+                  <JFXPasswordField fx:id="password" promptText="Password" styleClass="field" />
                   <HBox alignment="CENTER_RIGHT">
                      <children>
-                        <JFXButton buttonType="RAISED" onAction="#onSignIn" styleClass="btn-login" text="Sign In" />
+                        <JFXButton fx:id="loginBtn" buttonType="RAISED" onAction="#onSignIn" styleClass="btn-login" text="Sign In" />
                      </children>
                      <VBox.margin>
                         <Insets top="10.0" />

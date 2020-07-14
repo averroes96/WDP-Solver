@@ -5,6 +5,7 @@
  */
 package wdp;
 
+import Include.Init;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,11 +16,12 @@ import javafx.stage.Stage;
  *
  * @author user
  */
-public class WDP extends Application {
+public class WDP extends Application implements Init {
     
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/Fxmls/Authentification.fxml"));
+        
+        Parent root = FXMLLoader.load(getClass().getResource(FXMLS_PATH + "Authentification.fxml"));
         
         Scene scene = new Scene(root);
         stage.setScene(scene);

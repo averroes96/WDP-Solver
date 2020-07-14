@@ -5,8 +5,14 @@
  */
 package Controllers;
 
+import static Include.Common.setDraggable;
+import static Include.ConnectDB.userExists;
+import Include.Init;
+import Include.SpecialAlert;
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXPasswordField;
 import com.jfoenix.controls.JFXTextField;
+import java.io.IOException;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -18,27 +24,29 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.layout.HBox;
 
-public class AuthentificationController implements Initializable {
-    @FXML
-    private AnchorPane root;
-    @FXML
-    private StackPane rootSign;
-    @FXML
-    private VBox paneSignIn, paneSignUp;
+public class AuthentificationController implements Initializable, Init {
+    @FXML private StackPane rootSign;
+    @FXML private VBox paneSignIn, paneSignUp;
 
     /* Sign In Attribute */
-    @FXML
-    private JFXTextField fieldEmailSignIn;
-    @FXML
-    private JFXPasswordField fieldPasswordSignIn;
+    @FXML private JFXTextField username;
+    @FXML private JFXPasswordField password;
 
     /* Sign Up Attribute */
-    @FXML
-    private JFXTextField fieldFullNameSignUp, fieldEmailSignUp;
-    @FXML
-    private JFXPasswordField fieldPasswordSignUp;
+    @FXML private JFXTextField fieldFullNameSignUp, fieldEmailSignUp;
+    @FXML private JFXPasswordField fieldPasswordSignUp;
+    @FXML private JFXButton loginBtn;
 
     // for animation
     TranslateTransition translateAnimation;
@@ -46,29 +54,22 @@ public class AuthentificationController implements Initializable {
     // For Make Stage Drageable
     private double xOffset = 0;
     private double yOffset = 0;
+    
+    SpecialAlert alert = new SpecialAlert();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        
         translateAnimation = new TranslateTransition();
-        //makeStageDrageable();
-    }
-/*
-    private void makeStageDrageable() {
-        root.setOnMousePressed(event -> {
-            xOffset = event.getSceneX();
-            yOffset = event.getSceneY();
+        loginBtn.setOnAction(Action -> {
+            try {
+                onSignIn(Action);
+            } catch (IOException ex) {
+                alert.show(WRONG_PATH, ex.getMessage(), Alert.AlertType.ERROR,true);
+            }
         });
-
-        root.setOnMouseDragged(event -> {
-            FormsDemo.stage.setX(event.getScreenX() - xOffset);
-            FormsDemo.stage.setY(event.getScreenY() - yOffset);
-            FormsDemo.stage.setOpacity(0.7f);
-        });
-
-        root.setOnDragDone(e -> FormsDemo.stage.setOpacity(1.0f));
-        root.setOnMouseReleased(e -> FormsDemo.stage.setOpacity(1.0f));
     }
-*/
+
     /* Change Pane (between Sign in and Sign up */
     @FXML
     private void goToSignIn() {
@@ -95,8 +96,34 @@ public class AuthentificationController implements Initializable {
 
     /* Sign In Action */
     @FXML
-    private void onSignIn() {
+    private void onSignIn(ActionEvent event) throws IOException {
 
+        try {
+            if(userExists(username.getText().trim(),password.getText().trim())){            
+                ((Node)event.getSource()).getScene().getWindow().hide();
+                Stage stage = new Stage();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(FXMLS_PATH + "Dashboard.fxml"));
+                HBox root = (HBox)loader.load();
+                DashboardController mControl = (DashboardController)loader.getController();
+                //mControl.getEmployer(getUser(username.getText(), password.getText()));
+                Scene scene = new Scene(root);
+                scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+                //stage.initStyle(StageStyle.TRANSPARENT);
+                stage.setScene(scene);
+                stage.show();
+                setDraggable(root,stage);
+                
+            }
+            else{
+                
+                alert.show(USER_EXIST, USER_EXIST_MESSAGE, Alert.AlertType.ERROR,false);
+                        
+            }
+        } catch (SQLException ex) {
+            alert.show(CONNECTION_ERROR, CONNECTION_ERROR_MESSAGE, Alert.AlertType.ERROR,true);
+            
+        }        
+        
     }
 
     /* Sign Up Action */
@@ -112,6 +139,6 @@ public class AuthentificationController implements Initializable {
     }
     @FXML
     private void onHide() {
-        ((Stage) fieldEmailSignIn.getScene().getWindow()).setIconified(true);
+        ((Stage) username.getScene().getWindow()).setIconified(true);
     }
 }
