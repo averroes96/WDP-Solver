@@ -19,11 +19,12 @@ public class WDP extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/Fxmls/Authentification.fxml"));
         
         Scene scene = new Scene(root);
-        
         stage.setScene(scene);
+        stage.setMinWidth(800);
+        stage.setMinHeight(500);
         stage.show();
     }
 
