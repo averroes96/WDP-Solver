@@ -36,5 +36,13 @@ public interface Init {
     String USER_EXIST_MESSAGE = "This user does not exist or was already deleted !";
     
     String WRONG_PATH = "Wrong path";
+    
+    String SUCCESS = "Success!";
+    
+    String SIGNUP_SUCCESS_MSG = "You were successfully signed up !";
+    
+    String USERNAME_ERROR = "Username exist!";
+    
+    String USERNAME_ERROR_MESSAGE = "This username is already taken!";
         
 }

@@ -6,7 +6,7 @@
 package Controllers;
 
 import static Include.Common.setDraggable;
-import static Include.ConnectDB.userExists;
+import static Include.Database.userExists;
 import Include.Init;
 import Include.SpecialAlert;
 import com.jfoenix.controls.JFXButton;
@@ -22,7 +22,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
@@ -75,7 +74,7 @@ public class AuthentificationController implements Initializable, Init {
     private void goToSignIn() {
         translateAnimation.setToX(0);
         translateAnimation.setNode(rootSign);
-        translateAnimation.setDuration(Duration.seconds(0.5));
+        translateAnimation.setDuration(Duration.seconds(0.2));
         translateAnimation.play();
         translateAnimation.setOnFinished(e -> {
             paneSignIn.setVisible(true);
@@ -86,7 +85,7 @@ public class AuthentificationController implements Initializable, Init {
     private void goToSignUp() {
         translateAnimation.setToX(-500);
         translateAnimation.setNode(rootSign);
-        translateAnimation.setDuration(Duration.seconds(0.5));
+        translateAnimation.setDuration(Duration.seconds(0.2));
         translateAnimation.play();
         translateAnimation.setOnFinished(e -> {
             paneSignIn.setVisible(false);
