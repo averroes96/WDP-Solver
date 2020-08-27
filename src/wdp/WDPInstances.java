@@ -71,6 +71,17 @@ public class WDPInstances {
                         else
                             bid.getBidObjects().add(Integer.parseInt(arr[cpt]));
                     }
+                    
+                    if(!bids.isEmpty()){
+                    for(Bid currentBids : bids){
+                        if(currentBids.inConflictWith(bid)){
+                            currentBids.addToConflicts(bid);
+                        }
+                        else{
+                            currentBids.addToNot(bid);
+                        }
+                    }
+                    }
                     bids.add(bid);
                 }
                 i++;

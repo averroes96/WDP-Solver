@@ -20,6 +20,7 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +30,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ProgressBar;
 
 /**
  *
@@ -41,49 +43,33 @@ public class MainController implements Initializable, Init {
     @FXML private JFXTextArea resultArea ;
     @FXML private JFXToggleButton bidPoll;
     
+    ProgressBar pb;
+    
+    
     SpecialAlert alert = new SpecialAlert();
-    Console console = new Console(resultArea);
     WDPInstances instances = new WDPInstances();
     MNTSearch search = new MNTSearch();
     ObservableList instNames = FXCollections.observableArrayList();
-    Instant t1,t2;
-    PrintStream ps = new PrintStream(console, true);   
+    Instant t1,t2;   
     long elapsedTime;
     
-    
-    public static class Console extends OutputStream {
-
-        private JFXTextArea output;
-
-        public Console(JFXTextArea ta) {
-            this.output = ta;
-        }
-
-        @Override
-        public void write(int i) throws IOException {
-            output.appendText(String.valueOf((char) i));
-        }
-    }    
     
    
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
-        System.setOut(ps);
-        System.setErr(ps); 
-        
+
         try {
             
             try {
-                instNames = WDPInstances.getAllFileNames(new File("C:\\Users\\user\\Documents\\NetBeansProjects\\WDP\\src\\instance"));                
+                instNames = WDPInstances.getAllFileNames(new File("C:\\Users\\user\\Documents\\NetBeansProjects\\WDP\\src\\Instances"));                
             } catch (IOException ex) {
                 alert.show(INOUT_EXCEPTION, ex.getMessage(), Alert.AlertType.ERROR, true);
             }
             
             instanceBox.setItems(instNames);
             instanceBox.getSelectionModel().selectFirst();
-            search.setGraph(instances.getGraph(INSTANCE_FOLDER + instanceBox.getSelectionModel().getSelectedItem()));
+            search.setGraph(instances.getGraph("C:\\Users\\user\\Documents\\NetBeansProjects\\WDP\\src\\Instances\\" + instanceBox.getSelectionModel().getSelectedItem()));
             
             instanceBox.setOnAction((ActionEvent Action) -> {
                 
@@ -144,8 +130,21 @@ public class MainController implements Initializable, Init {
                 
                 alert.show("Solution was found", "> Elapsed time = " + elapsedTime + " ms" + "\n> Total gain = " + search.starClique.getWeight(), Alert.AlertType.ERROR, false);
                 
+            ArrayList values = new ArrayList<>();
+            
+            search.starClique.getCliqueBids().forEach((bid) -> {
+                bid.getBidObjects().stream().map((integer) -> {
+                    if(values.contains(integer)){
+                        System.out.println(integer + " is duplicated");
+                    }
+                    return integer;
+                }).forEachOrdered((integer) -> {
+                    values.add(integer);
+                });
                 
-            });        
+            });
+                
+            });
             
         } catch (IOException ex) {
             Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);

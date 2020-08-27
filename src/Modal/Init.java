@@ -17,6 +17,6 @@ public interface Init {
     
     String INOUT_EXCEPTION = "Input/Output exception has occured !";
     
-    String INSTANCE_FOLDER = "C:\\Users\\user\\Documents\\NetBeansProjects\\WDP\\src\\instance\\";
+    String INSTANCE_FOLDER = "C:\\Users\\user\\Documents\\NetBeansProjects\\WDP\\src\\Instances\\";
     
 }

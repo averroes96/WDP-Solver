@@ -21,7 +21,7 @@ public class WDP extends Application implements Init {
     @Override
     public void start(Stage stage) throws Exception {
         
-        Parent root = FXMLLoader.load(getClass().getResource(FXMLS_PATH + "Authentification.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/wdp/Main.fxml"));
         
         Scene scene = new Scene(root);
         stage.setScene(scene);

@@ -16,14 +16,16 @@ public class Bid {
     
     private ArrayList<Integer> bidObjects ;
     private double price ;
-    private ArrayList<Bid> conflict;
-    private ArrayList<Bid> notConflict;
+    private ArrayList<Bid> conflict = new ArrayList<>();
+    private ArrayList<Bid> notConflict = new ArrayList<>();
     private int tt ;
 
     public Bid(int pricce) {
         
         bidObjects = new ArrayList<>() ;
         this.price = pricce ;
+        this.conflict = new ArrayList<>();
+        this.notConflict = new ArrayList<>();
         
     }
     
@@ -76,6 +78,15 @@ public class Bid {
             b.conflict.add(this);
         }
         
+    }
+    
+    public void addToNot(Bid b){
+        
+        if(!this.inConflictWith(b)){
+            this.notConflict.add(b);
+            b.notConflict.add(this);
+        }
+       
     }
     
 	public boolean equals(Bid b){
@@ -144,9 +155,29 @@ public class Bid {
     public void setTt(int tt) {
         this.tt = tt;
     }
+
+    public ArrayList<Bid> getNotConflict() {
+        return notConflict;
+    }
+
+    public void setNotConflict(ArrayList<Bid> notConflict) {
+        this.notConflict = notConflict;
+    }
     
-    
-    
+    public boolean isWithOneConflict(ArrayList<Bid> bids){
+        
+        int cpt = 0;
+        
+        for(Bid bid : bids){
+            if(this.inConflictWith(bid)){
+                cpt++;
+                if(cpt > 1)
+                    return false;
+            }
+        }
+        
+        return true;
+    }
     
     
 }
