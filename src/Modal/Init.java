@@ -11,9 +11,9 @@ package Modal;
  */
 public interface Init {
     
-    int MAX_ITER = 500;
+    int MAX_ITER = 4000;
     
-    int DEPTH_SEARCH = 80;
+    int DEPTH_SEARCH = 100;
     
     String INOUT_EXCEPTION = "Input/Output exception has occured !";
     

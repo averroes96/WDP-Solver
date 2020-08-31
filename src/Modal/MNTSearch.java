@@ -5,8 +5,6 @@
  */
 package Modal;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.logging.Level;
@@ -27,8 +25,7 @@ public class MNTSearch implements Init{
     public ArrayList<Bid> tabouList = new ArrayList<>();
     public ArrayList<Bid> omList = new ArrayList<>();
     public ArrayList<Bid> paList = new ArrayList<>();
-    private int tSwap, currIter, noImprovement ;
-    private final int tabu = 7 ;
+    public int tSwap, currIter, noImprovement ;
     private Random myrand = new Random();
     
     public ArrayList<Bid> getGraph() {
@@ -55,12 +52,22 @@ public class MNTSearch implements Init{
             bidGlobal.getNotConflict().stream().filter((bid) -> (!clique.getCliqueBids().contains(bid) && !tabouList.contains(bid) && bid.isWithOneConflict(clique.getCliqueBids()))).forEachOrdered((bid) -> {
                 omList.add(bid);
             });
-        });*/        
-        
+        });*/
         
         graph.stream().filter((bid) -> (allButOne(bid) != -1 && !locale.getCliqueBids().contains(bid) && !tabouList.contains(bid))).forEachOrdered((bid) -> {
             omList.add(bid);
         });
+    }
+    
+    public int getNotConflictSize(){
+        
+        int count = 0, i = 1;
+        count = this.starClique.getCliqueBids().stream().map((starBid) -> {
+            System.out.println("Bid " + i + " = " + starBid.getNotConflict().size());
+            return starBid;
+        }).map((starBid) -> starBid.getNotConflict().size()).reduce(count, Integer::sum);
+        
+        return count;
     }
     
     public void PAList(){
@@ -134,7 +141,10 @@ public class MNTSearch implements Init{
     
     public Clique selectRandomSolution(){
         
+        clearTabouList();
+        
         int vertice = myrand.nextInt(graph.size()) ;
+        //System.out.println(vertice);
         
         Clique thisClique = new Clique() ;
         
@@ -154,30 +164,22 @@ public class MNTSearch implements Init{
     }
     
     public Clique explorePAList(Clique clique) throws CloneNotSupportedException{
-             
-        
-        if(!paList.isEmpty()){
-        
-            int index = myrand.nextInt(paList.size()) ;
 
-                ADD(paList.get(index), clique);
-                
-        }
+        
+        int index = myrand.nextInt(paList.size()) ;
+
+        ADD(paList.get(index), clique);
         
         return clique ;
         
     }
     
     public Clique exploreOMList(Clique clique) throws CloneNotSupportedException{
-       
-        
-        if(!omList.isEmpty()){
-        
-            int index = myrand.nextInt(omList.size()) ;
 
-                SWAP(omList.get(index), clique);
-                
-        }     
+        
+        int index = myrand.nextInt(omList.size()) ;
+
+        SWAP(omList.get(index), clique);     
         
         return clique ;
         
@@ -185,28 +187,74 @@ public class MNTSearch implements Init{
     
     public void ExploreNeighborhood(){
         
-        
-        if(!paList.isEmpty()){
-        
-            int index = myrand.nextInt(paList.size()) ;
-
-            ADD(paList.get(index), locale);
-                
-        }else if(!omList.isEmpty()){
-            int index = myrand.nextInt(omList.size()) ;
-
-                SWAP(omList.get(index), locale);            
-        }
-        else{
-            DROP(locale.getCliqueBids().get(myrand.nextInt(locale.getCliqueBids().size())), locale);
-        }
-        
-        /*
-        
         try {
+            Clique pa = locale.clone();
+            Clique om = locale.clone();
+            Clique drop = locale.clone();
+            
+            if(!paList.isEmpty() && !omList.isEmpty()){
+                
+                pa = explorePAList(pa);
+                om = exploreOMList(om);
+                
+                if(pa.getWeight() >= om.getWeight()){
+                    //System.out.println("ADD");
+                    locale = pa;
+                }
+                else{
+                    //System.out.println("SWAP");
+                    locale = om;
+                }
+            }
+            else if(!paList.isEmpty()){
+                pa = explorePAList(pa);
+                //System.out.println("ADD");
+                locale = pa;
+            }
+            else if(!omList.isEmpty()){
+                om = exploreOMList(om);
+                DROP(drop.getCliqueBids().get(myrand.nextInt(drop.getCliqueBids().size())), drop);
+                
+                if(om.getWeight() >= drop.getWeight()){
+                    //System.out.println("SWAP");
+                    locale = om;
+                }
+                else{
+                    //System.out.println("DROP");
+                    locale = drop;
+                }
+            }            
+            else{
+                DROP(drop.getCliqueBids().get(myrand.nextInt(drop.getCliqueBids().size())), drop);
+                //System.out.println("DROP");
+                locale = drop;                
+            }
+            
+            /*
+            if(!paList.isEmpty()){
+                
+                int index = myrand.nextInt(paList.size()) ;
+                
+                ADD(paList.get(index), locale);
+                
+                System.out.println("ADD");
+                
+            }else if(!omList.isEmpty()){
+                int index = myrand.nextInt(omList.size()) ;
+                
+                SWAP(omList.get(index), locale);
+            }
+            else{
+                DROP(locale.getCliqueBids().get(myrand.nextInt(locale.getCliqueBids().size())), locale);
+                System.out.println("DROP");
+            }
+            
+            
+            
+            try {
             ArrayList<Bid> initBids = new ArrayList();
             locale.getCliqueBids().forEach((bid) -> {
-                initBids.add(bid);
+            initBids.add(bid);
             });
             double initWeight = locale.getWeight();
             
@@ -222,16 +270,16 @@ public class MNTSearch implements Init{
             
             
             if(paClique.getWeight() > omClique.getWeight()){
-                if(paClique.getWeight() > dropClique.getWeight())
-                    return paClique;
-                else
-                    return dropClique;
+            if(paClique.getWeight() > dropClique.getWeight())
+            return paClique;
+            else
+            return dropClique;
             }
             else{
-                if(omClique.getWeight() > dropClique.getWeight())
-                    return omClique;
-                else
-                    return dropClique;
+            if(omClique.getWeight() > dropClique.getWeight())
+            return omClique;
+            else
+            return dropClique;
             }*/
                     
             /*
@@ -249,13 +297,31 @@ public class MNTSearch implements Init{
             //System.out.println("SWAP");
             return temp;
             }
-
             
-        } catch (CloneNotSupportedException ex) {
+
+            } catch (CloneNotSupportedException ex) {
             Logger.getLogger(MNTSearch.class.getName()).log(Level.SEVERE, null, ex);
             return null;
-        }*/
+            }*/
+        } catch (CloneNotSupportedException ex) {
+            Logger.getLogger(MNTSearch.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
+    
+    public void clearTabouList(){
+        
+        if(!tabouList.isEmpty()){
+                
+            tabouList.forEach((bid) -> {
+                bid.setTt(0);
+            });
+        
+        }
+        
+        tabouList.clear();
+        
+    }
+    
     
     public void updateTabouList(){
         
@@ -275,13 +341,16 @@ public class MNTSearch implements Init{
         
         currIter = 0 ;
         
+        starClique = new Clique();
+        global = new Clique();
+        
         while(currIter < 4000){
             
-            Instant t = Instant.now();
+            //Instant t = Instant.now();
             locale = selectRandomSolution();
-            Instant t1 = Instant.now();
+            //Instant t1 = Instant.now();
             
-            System.out.println("Time to select a solution = " + Duration.between(t, t1).toMillis());
+            //System.out.println("Time to select a solution = " + Duration.between(t, t1).toMillis());
             
             noImprovement = 0 ;
             
@@ -291,26 +360,26 @@ public class MNTSearch implements Init{
                 Logger.getLogger(MNTSearch.class.getName()).log(Level.SEVERE, null, ex);
             }
             
-            while(noImprovement < 50){
+            while(noImprovement < 100){
 
                 try {                    
                     
-                    t = Instant.now();
+                    //t = Instant.now();
                     PAList();
-                    t1 = Instant.now();
-                    System.out.println("Time to set PA = " + Duration.between(t, t1).toMillis());
+                    //t1 = Instant.now();
+                    //System.out.println("Time to set PA = " + Duration.between(t, t1).toMillis());
                     
-                    t = Instant.now();
+                    //t = Instant.now();
                     OMList();
-                    t1 = Instant.now();
-                    System.out.println("Time to set OM = " + Duration.between(t, t1).toMillis());
+                    //t1 = Instant.now();
+                    //System.out.println("Time to set OM = " + Duration.between(t, t1).toMillis());
                     
                     
-                    t = Instant.now();
+                    //t = Instant.now();
                     ExploreNeighborhood();
-                    //System.out.println("locale = " + locale.getWeight());
-                    t1 = Instant.now();
-                    System.out.println("Time to explore neighborhood = " + Duration.between(t, t1).toMillis());
+                    
+                    //t1 = Instant.now();
+                    //System.out.println("Time to explore neighborhood = " + Duration.between(t, t1).toMillis());
                     
                     //System.out.println("PAList weight = " + temp.getWeight());
                     //System.out.println("OMList weight = " + tempTwo.getWeight());
@@ -318,17 +387,20 @@ public class MNTSearch implements Init{
                     noImprovement++ ;
                     currIter++ ;
                     
-                    t = Instant.now();
+                    //t = Instant.now();
                     updateTabouList();
-                    t1 = Instant.now();
-                    System.out.println("Time to update Tabou = " + Duration.between(t, t1).toMillis());
+                    //t1 = Instant.now();
+                    //System.out.println("Time to update Tabou = " + Duration.between(t, t1).toMillis());
                     
                     
                     if(locale.getWeight() > global.getWeight()){
                         noImprovement = 0 ;
                         global = locale.clone();
+                        //System.out.println("global = " + global.getWeight());
 
                     }
+                    
+                    //System.out.println("global = " + global.getWeight());
                     
                 } catch (CloneNotSupportedException ex) {
                     Logger.getLogger(MNTSearch.class.getName()).log(Level.SEVERE, null, ex);
@@ -343,8 +415,8 @@ public class MNTSearch implements Init{
                 Logger.getLogger(MNTSearch.class.getName()).log(Level.SEVERE, null, ex);
             }
             
-            System.out.println("Num Iter = " + currIter);
-            System.out.println("Weight = " + starClique.getWeight());
+            //System.out.println("Num Iter = " + currIter);
+            System.out.println("star = " + starClique.getWeight());
             
         }
         
