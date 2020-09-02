@@ -72,11 +72,11 @@ public class MainController implements Initializable, Init {
 
         try {
             
-            instNames = WDPInstances.getAllFileNames(new File("C:\\Users\\user\\Documents\\NetBeansProjects\\WDP\\src\\Instances"));                
+            instNames = WDPInstances.getAllFileNames(new File(INSTANCE_FOLDER));                
             
             instanceBox.setItems(instNames);
             instanceBox.getSelectionModel().selectFirst();
-            search.setGraph(instances.getGraph("C:\\Users\\user\\Documents\\NetBeansProjects\\WDP\\src\\Instances\\" + instanceBox.getSelectionModel().getSelectedItem()));
+            search.setGraph(instances.getGraph(INSTANCE_FOLDER + instanceBox.getSelectionModel().getSelectedItem()));
             resultArea.setText("Matrix dim = " + instances.getNbrBids() + " x " + instances.getNbrObjects());
             
             instanceBox.setOnAction((ActionEvent Action) -> {
