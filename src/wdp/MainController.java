@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -29,6 +30,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
 
 /**
  *
@@ -52,10 +54,23 @@ public class MainController implements Initializable, Init {
     
     
     @FXML
-    public void loadDialog(JFXDialog dialog, JFXDialogLayout layout, StackPane pane){
+    public void loadDialog(JFXDialogLayout layout, boolean button){
         
-        pane.setVisible(true);
-        dialog = new JFXDialog(pane, layout , JFXDialog.DialogTransition.CENTER);
+        stackPane.setVisible(true);
+        findBtn.setDefaultButton(false);
+        JFXButton btn = new JFXButton("Okay");
+        btn.setDefaultButton(true);
+        btn.setOnAction(Action -> {
+            dialog.close();
+            stackPane.setVisible(false);
+            btn.setDefaultButton(false);
+            findBtn.setDefaultButton(true);
+        });
+        if(button){
+            layout.setActions(btn);
+        }
+        dialog = new JFXDialog(stackPane, layout , JFXDialog.DialogTransition.CENTER);
+        dialog.setOverlayClose(false);
         dialog.show();
     }
     
@@ -138,12 +153,12 @@ public class MainController implements Initializable, Init {
                 
                 resultArea.clear();
                 
-                /*
+                
                 JFXDialogLayout layout = new JFXDialogLayout();
                 layout.setHeading(new Text("Searching..."));
                 layout.setBody(new Text("Searching for solution"));
                             
-                loadDialog(dialog, layout, stackPane);*/
+                loadDialog(layout, false);
                 
                 Thread th = new Thread(() -> {
                     t1 = Instant.now();
@@ -174,10 +189,10 @@ public class MainController implements Initializable, Init {
                     
                     System.out.println("> Elapsed time = " + elapsedTime + " seconds" + "\n> Total gain = " + search.starClique.getWeight());
                     
-                    /*
-                    layout.setHeading(new Text("Optimized solution was found"));
-                    layout.setBody(new Text("> Elapsed time = " + elapsedTime + " seconds" + "\n> Total gain = " + search.starClique.getWeight()));
-                    loadDialog(dialog, layout, stackPane);
+                    JFXDialogLayout layout1 = new JFXDialogLayout();
+                    layout1.setHeading(new Text("Optimized solution was found"));
+                    layout1.setBody(new Text("> Elapsed time = " + elapsedTime + " seconds" + "\n> Total gain = " + search.starClique.getWeight()));
+                    loadDialog(layout1, true);
                     ArrayList values = new ArrayList<>();
                     search.starClique.getCliqueBids().forEach((bid) -> {
                         bid.getBidObjects().stream().map((integer) -> {
@@ -189,7 +204,7 @@ public class MainController implements Initializable, Init {
                             values.add(integer);
                         });
                         
-                    });*///To change body of generated methods, choose Tools | Templates.
+                    });//To change body of generated methods, choose Tools | Templates.
                     });
 
                 });
