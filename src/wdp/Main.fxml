@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXDialog?>
 <?import com.jfoenix.controls.JFXTextArea?>
-<?import com.jfoenix.controls.JFXToggleButton?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -21,20 +21,26 @@
          </font>
          <padding>
             <Insets bottom="5.0" left="10.0" right="5.0" top="10.0" />
-         </padding></JFXTextArea>
-      <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" prefHeight="40.0" prefWidth="772.0" text="WDP Solver" textFill="#4a536b" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0">
+         </padding>
+         <effect>
+            <DropShadow color="#00000099" height="15.0" radius="7.0" width="15.0" />
+         </effect></JFXTextArea>
+      <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" prefHeight="40.0" prefWidth="772.0" text="WDP Solver" textFill="#4a536b" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0">
          <font>
             <Font name="Consolas Bold" size="24.0" />
          </font>
       </Label>
       <VBox alignment="CENTER" layoutX="25.0" layoutY="68.0" prefHeight="200.0" prefWidth="750.0" spacing="20.0" AnchorPane.leftAnchor="25.0" AnchorPane.rightAnchor="25.0">
          <children>
-            <JFXComboBox fx:id="instanceBox" focusColor="#eeeeee" focusTraversable="false" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #4a536b; -fx-text-fill: #aed6dc; -fx-alignment: center;" unFocusColor="#eeeeee">
+            <ChoiceBox fx:id="instanceBox" prefHeight="42.0" prefWidth="200.0">
+               <effect>
+                  <DropShadow color="#00000099" height="15.0" radius="7.0" width="15.0" />
+               </effect>
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
-            </JFXComboBox>
-            <JFXButton fx:id="findBtn" alignment="CENTER" buttonType="RAISED" prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #ff9a8d;" text="Find" textFill="#4a536b">
+            </ChoiceBox>
+            <JFXButton fx:id="findBtn" alignment="CENTER" buttonType="RAISED" prefHeight="42.0" prefWidth="200.0" style="-fx-background-color: #ff9a8d;" text="Find" textFill="#4a536b">
                <font>
                   <Font name="Consolas Bold" size="18.0" />
                </font>
@@ -42,11 +48,6 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </JFXButton>
-            <JFXToggleButton fx:id="bidPoll" prefHeight="60.0" prefWidth="250.0" text="Show bids information" textFill="#4a536b" toggleColor="#4a536b" toggleLineColor="#dddddd" unToggleColor="#dddddd">
-               <font>
-                  <Font name="Consolas Bold" size="14.0" />
-               </font>
-            </JFXToggleButton>
          </children>
       </VBox>
       <StackPane fx:id="stackPane" layoutX="300.0" layoutY="211.0" prefHeight="150.0" prefWidth="200.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">

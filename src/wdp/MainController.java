@@ -5,16 +5,16 @@
  */
 package wdp;
 
-import Include.SpecialAlert;
 import Modal.Bid;
 import Modal.Init;
 import Modal.MNTSearch;
+import animatefx.animation.AnimationFX;
+import animatefx.animation.FlipInY;
+import animatefx.animation.Shake;
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXDialog;
 import com.jfoenix.controls.JFXDialogLayout;
 import com.jfoenix.controls.JFXTextArea;
-import com.jfoenix.controls.JFXToggleButton;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -28,7 +28,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
@@ -38,14 +38,12 @@ import javafx.scene.text.Text;
  */
 public class MainController implements Initializable, Init {
     
-    @FXML private JFXComboBox<String> instanceBox ;
+    @FXML private ChoiceBox<String> instanceBox ;
     @FXML private JFXButton findBtn;
     @FXML private JFXTextArea resultArea ;
-    @FXML private JFXToggleButton bidPoll;
     @FXML private StackPane stackPane,stackPane1;
     @FXML private JFXDialog dialog;
     
-    SpecialAlert alert = new SpecialAlert();
     WDPInstances instances = new WDPInstances();
     MNTSearch search = new MNTSearch();
     ObservableList instNames = FXCollections.observableArrayList();
@@ -96,6 +94,7 @@ public class MainController implements Initializable, Init {
             
             instanceBox.setOnAction((ActionEvent Action) -> {
                 
+                
                 try {
                     search.setGraph(instances.getGraph(INSTANCE_FOLDER + instanceBox.getSelectionModel().getSelectedItem()));
                     search.starClique.getCliqueBids().clear();
@@ -105,46 +104,14 @@ public class MainController implements Initializable, Init {
                     
                     resultArea.appendText("\n");
                     
-                    if(bidPoll.isSelected()){
-                        
-                        Thread th = new Thread(() -> {
-                            
-                            if (Platform.isFxApplicationThread()) {
-                                int i = 0 ;
-                                
-                                for(Bid bid : search.getGraph()){
-                                    
-                                    resultArea.appendText("Bid n = " + (i+1));
-                                    resultArea.appendText("Price = " + bid.getPrice());
-                                    resultArea.appendText("Concerned object :");
-                                    bid.getBidObjects().forEach((integer) -> {
-                                        resultArea.appendText(integer + " ");
-                                    });
-                                    i++;
-                                    resultArea.appendText("\n");   
-                                } 
-                            } else {
-                                Platform.runLater(() -> {
-                                int i = 0 ;
-                                
-                                for(Bid bid : search.getGraph()){
-                                    
-                                    resultArea.appendText("Bid n = " + (i+1));
-                                    resultArea.appendText("Price = " + bid.getPrice());
-                                    resultArea.appendText("Concerned object :");
-                                    bid.getBidObjects().forEach((integer) -> {
-                                        resultArea.appendText(integer + " ");
-                                    });
-                                    i++;
-                                    resultArea.appendText("\n");   
-                                }                                    
-                                });
-                            }                            
-                        });
-                        th.start();
-                    }
+                    new FlipInY(resultArea).play();
+                    
                 } catch (IOException ex) {
-                    alert.show(INOUT_EXCEPTION, ex.getMessage(), Alert.AlertType.ERROR, true);
+                    JFXDialogLayout layout = new JFXDialogLayout();
+                    layout.setHeading(new Text(INOUT_EXCEPTION));
+                    layout.setBody(new Text(ex.getMessage()));
+
+                    loadDialog(layout, false);
                 }
                 
             });
@@ -152,7 +119,6 @@ public class MainController implements Initializable, Init {
             findBtn.setOnAction(Action -> {
                 
                 resultArea.clear();
-                
                 
                 JFXDialogLayout layout = new JFXDialogLayout();
                 layout.setHeading(new Text("Searching..."));
@@ -185,10 +151,10 @@ public class MainController implements Initializable, Init {
                                       
                 
                 Platform.runLater(() -> {
+                    
+                    new FlipInY(resultArea).play();
                     resultArea.appendText(finalSolution);
-                    
-                    System.out.println("> Elapsed time = " + elapsedTime + " seconds" + "\n> Total gain = " + search.starClique.getWeight());
-                    
+                                        
                     JFXDialogLayout layout1 = new JFXDialogLayout();
                     layout1.setHeading(new Text("Optimized solution was found"));
                     layout1.setBody(new Text("> Elapsed time = " + elapsedTime + " seconds" + "\n> Total gain = " + search.starClique.getWeight()));
@@ -214,8 +180,20 @@ public class MainController implements Initializable, Init {
             });
             
         } catch (IOException ex) {
-            alert.show(INOUT_EXCEPTION, ex.getMessage(), Alert.AlertType.ERROR, true);
+                JFXDialogLayout layout = new JFXDialogLayout();
+                layout.setHeading(new Text(INOUT_EXCEPTION));
+                layout.setBody(new Text(ex.getMessage()));
+
+                loadDialog(layout, false);
         }
+        
+        AnimationFX animBtn = new Shake(findBtn);
+        
+        findBtn.setOnMouseEntered(value -> {
+            animBtn.play();
+        });      
+        
+        
        
     }    
     

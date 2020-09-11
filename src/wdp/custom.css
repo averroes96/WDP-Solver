@@ -1,5 +1,20 @@
-.jfx-combo-box{
+
+.choice-box {
     
-    -fx-text-fill: #FFF;
-    
+  -fx-background-color: white;
+  -fx-mark-color: #3D4956;
+
+  
 }
+
+.choice-box > .label { 
+    -fx-text-fill: #4a536b;   
+    -fx-alignment: CENTER;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+}
+
+.choice-box .context-menu { -fx-background-color:  #4a536b; }
+.choice-box .menu-item:focused { -fx-background-color:  #ff9a8d; }
+.choice-box .menu-item > .label { -fx-text-fill: white; }
+.choice-box .menu-item:focused > .label { -fx-text-fill: #4a536b; }
