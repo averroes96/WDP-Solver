@@ -10,6 +10,7 @@ import Modal.Init;
 import Modal.MNTSearch;
 import animatefx.animation.AnimationFX;
 import animatefx.animation.FlipInY;
+import animatefx.animation.Pulse;
 import animatefx.animation.Shake;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDialog;
@@ -118,6 +119,8 @@ public class MainController implements Initializable, Init {
             
             findBtn.setOnAction(Action -> {
                 
+                // Start Algorithm
+                
                 resultArea.clear();
                 
                 JFXDialogLayout layout = new JFXDialogLayout();
@@ -126,6 +129,30 @@ public class MainController implements Initializable, Init {
                             
                 loadDialog(layout, false);
                 
+                startAlgorithm();
+                                          
+            });
+            
+        } catch (IOException ex) {
+                JFXDialogLayout layout = new JFXDialogLayout();
+                layout.setHeading(new Text(INOUT_EXCEPTION));
+                layout.setBody(new Text(ex.getMessage()));
+
+                loadDialog(layout, false);
+        }
+        
+        AnimationFX animBtn = new Shake(findBtn);
+        
+        findBtn.setOnMouseEntered(value -> {
+            animBtn.play();
+        });      
+        
+        
+       
+    }    
+
+    private void startAlgorithm() {
+        
                 Thread th = new Thread(() -> {
                     t1 = Instant.now();
                     search.MNTAlgorithm();
@@ -147,54 +174,41 @@ public class MainController implements Initializable, Init {
 
                     solution += "\n\nTotal gain = " + search.starClique.getWeight();
                     
+                    System.out.println("> Elapsed time = " + elapsedTime + " ms" + "\n> Total gain = " + search.starClique.getWeight());
+                    
                     final String finalSolution = solution;
+                    
+                    dialog.close();
                                       
                 
-                Platform.runLater(() -> {
-                    
-                    new FlipInY(resultArea).play();
-                    resultArea.appendText(finalSolution);
-                                        
-                    JFXDialogLayout layout1 = new JFXDialogLayout();
-                    layout1.setHeading(new Text("Optimized solution was found"));
-                    layout1.setBody(new Text("> Elapsed time = " + elapsedTime + " seconds" + "\n> Total gain = " + search.starClique.getWeight()));
-                    loadDialog(layout1, true);
-                    ArrayList values = new ArrayList<>();
-                    search.starClique.getCliqueBids().forEach((bid) -> {
-                        bid.getBidObjects().stream().map((integer) -> {
-                            if(values.contains(integer)){
-                                System.out.println(integer + " is duplicated");
-                            }
-                            return integer;
-                        }).forEachOrdered((integer) -> {
-                            values.add(integer);
+                    Platform.runLater(() -> {
+
+                        // Print Result
+
+                        new Pulse(resultArea).play();
+                        resultArea.appendText(finalSolution);
+
+                        JFXDialogLayout layout1 = new JFXDialogLayout();
+                        layout1.setHeading(new Text("Optimized solution was found"));
+                        layout1.setBody(new Text("> Elapsed time = " + elapsedTime + " ms" + "\n> Total gain = " + search.starClique.getWeight()));
+                        loadDialog(layout1, true);
+                        ArrayList values = new ArrayList<>();
+                        search.starClique.getCliqueBids().forEach((bid) -> {
+                            bid.getBidObjects().stream().map((integer) -> {
+                                if(values.contains(integer)){
+                                    System.out.println(integer + " is duplicated");
+                                }
+                                return integer;
+                            }).forEachOrdered((integer) -> {
+                                values.add(integer);
+                            });
+
                         });
-                        
-                    });//To change body of generated methods, choose Tools | Templates.
                     });
 
                 });
                 th.setDaemon(true);
-                th.start();
-                                          
-            });
-            
-        } catch (IOException ex) {
-                JFXDialogLayout layout = new JFXDialogLayout();
-                layout.setHeading(new Text(INOUT_EXCEPTION));
-                layout.setBody(new Text(ex.getMessage()));
-
-                loadDialog(layout, false);
-        }
-        
-        AnimationFX animBtn = new Shake(findBtn);
-        
-        findBtn.setOnMouseEntered(value -> {
-            animBtn.play();
-        });      
-        
-        
-       
-    }    
+                th.start();    
+    }
     
 }

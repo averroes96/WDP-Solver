@@ -46,6 +46,7 @@ public class WDPInstances {
     }
    
         
+        // Method for converting a benchmark into a graph
         public ArrayList<Bid> getGraph(String filePath) throws FileNotFoundException, IOException{
             
             FileReader reader = new FileReader(filePath);
@@ -90,7 +91,9 @@ public class WDPInstances {
             
             return bids;
 
-        }   
+        }
+        
+        // Method to get all the benchmark's files names
         public static ObservableList<String> getAllFileNames(final File folder) throws IOException{
             
             ObservableList<String> filesList = FXCollections.observableArrayList();

@@ -12,7 +12,7 @@ import java.util.Iterator;
  *
  * @author user
  */
-public class Bid {
+public class Bid implements Comparable<Bid> {
     
     private ArrayList<Integer> bidObjects ;
     private double price ;
@@ -178,6 +178,17 @@ public class Bid {
         
         return true;
     }
+
+    @Override
+    public int compareTo(Bid t) {
+        if(this.price >= t.price){
+            return 1;
+        }
+        else{
+            return -1;
+        }
+    }
+    
     
     
 }
