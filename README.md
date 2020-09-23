@@ -14,7 +14,7 @@ This is a java implementation of the "Solving the winner determination problem v
 
 User just need to select one of the instances provided in the combo box and click on "Find" button to start the search.
 
-![](gui/interface.png)
+![](ui/interface.png)
 
 
 ## Link to the scientific paper 
